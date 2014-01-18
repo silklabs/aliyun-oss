@@ -11,8 +11,8 @@ npm install aliyun-oss
 ```js
 var OSS = require('aliyun-oss')
 var option = {
-	accessKeyId: 'your access key id',
-	accessKeySecret: 'your access key secret'
+  accessKeyId: 'your access key id',
+  accessKeySecret: 'your access key secret'
 }
 
 var oss = OSS.createClient(option)
@@ -21,12 +21,12 @@ var oss = OSS.createClient(option)
 参数说明：
 ```js
 options = {
-	bucket: 'bucket name',
-	object: 'object name',
-	acl: 'bucket 访问规则'
-	headers: {
-		// 可选，用户自定义 header，如: x-oss-meta-location
-	}
+  bucket: 'bucket name',
+  object: 'object name',
+  acl: 'bucket 访问规则'
+  headers: {
+    // 可选，用户自定义 header，如: x-oss-meta-location
+  }
 }
 ```
 
@@ -41,31 +41,31 @@ options = {
 */
 
 putObject({
-	bucket: '',
-	object: '',
-	source: '',
-	headers: {
-		// optional
-		'Content-Length': 1024
-	}
+  bucket: '',
+  object: '',
+  source: '',
+  headers: {
+    // optional
+    'Content-Length': 1024
+  }
 }, function (err, res) {})
 ```
 
 复制object
 ```js
 copyObject({
-	bucket: '',
-	object: '',
-	sourceBucket: '',
-	sourceObject: ''
+  bucket: '',
+  object: '',
+  sourceBucket: '',
+  sourceObject: ''
 }, function (err, res) {})
 ```
 
 删除object
 ```js
 deleteObject({
-	bucket: '',
-	object: ''
+  bucket: '',
+  object: ''
 }, function (err, res) {})
 ```
 
@@ -77,18 +77,18 @@ deleteObject({
 */
 
 getObject({
-	bucket: '',
-	object: '',
-	dest: '',
-	headers: {}
+  bucket: '',
+  object: '',
+  dest: '',
+  headers: {}
 }, function (err, res) {})
 ```
 
 获取object头信息
 ```js
 headObject({
-	bucket: '',
-	object: ''
+  bucket: '',
+  object: ''
 }, function (err, res) {})
 ```
 
@@ -102,11 +102,11 @@ headObject({
 */
 
 listObject({
-	bucket: '',
-	prefix: '',
-	marker: '',
-	delimiter: '',
-	maxKeys: ''
+  bucket: '',
+  prefix: '',
+  marker: '',
+  delimiter: '',
+  maxKeys: ''
 }, function (err, res) {})
 ```
 
@@ -120,29 +120,32 @@ listBucket(function (err, res) {})
 创建bucket
 ```js
 createBucket({
-	bucket: '',
-	acl: ''
+  bucket: '',
+  acl: ''
 }, function (err, res) {})
 ```
 
 删除bucket
 ```js
 deleteBucket({
-	bucket: ''
+  bucket: ''
 }, function (err, res) {})
 ```
 
 获取bucket访问规则
 ```js
 getBucketAcl({
-	bucket: ''
+  bucket: ''
 }, function (err, res) {})
 ```
 
 设置bucket访问规则
 ```js
 setBucketAcl({
-	bucket: '',
-	acl: ''
+  bucket: '',
+  acl: ''
 }, function (err, res) {})
 ```
+
+### License
+The MIT License (MIT)

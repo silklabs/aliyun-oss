@@ -23,7 +23,7 @@
     "oss"
   ],
   "author": "haoxin",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/coderhaoxin/aliyun-oss/issues"
   },

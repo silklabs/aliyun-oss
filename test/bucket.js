@@ -2,54 +2,81 @@ var should = require('should')
 var uuid   = require('node-uuid')
 var config = require('./config')
 var OSS    = require('../index')
-var oss    = new OSS.createClient(config)
+var oss    = OSS.createClient(config)
 
 describe('bucket', function () {
-	var bucketName = uuid.v4();
+  var bucketName01 = uuid.v4()
+  var bucketName02 = uuid.v4()
 
-	it('create bucket', function (done) {
-		oss.createBucket({
-			bucket: bucketName,
-			acl: 'public-read'
-		}, function (error, result) {
-			should.not.exist(error)
-			result.statusCode.should.equal(200)
-			done()
-		})
-	})
+  it('create bucket', function (done) {
+    oss.createBucket({
+      bucket: bucketName01
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(200)
+      done()
+    })
+  })
 
-	it('get bucket list', function (done) {
-		oss.listBucket(function (error, result) {
-			should.not.exist(error)
-			should.exist(result.ListAllMyBucketsResult)
-			done()
-		})
-	})
+  it('create bucket with acl', function (done) {
+    oss.createBucket({
+      bucket: bucketName02,
+      acl: 'public-read'
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(200)
+      done()
+    })
+  })
 
-	it('get bucket acl', function (done) {
-		oss.getBucketAcl(bucketName, function (error, result) {
-			should.not.exist(error)
-			should.exist(result.AccessControlPolicy)
-			done()
-		})
-	})
+  it('get bucket (list object)', function (done) {
+    oss.getBucket({
+      bucket: bucketName01
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(200)
+      done()
+    })
+  })
 
-	it('set bucket acl', function (done) {
-		oss.setBucketAcl({
-			bucket: bucketName,
-			acl: 'private'
-		}, function (error, result) {
-			should.not.exist(error)
-			result.statusCode.should.equal(200)
-			done()
-		})
-	})
+  it('get bucket acl', function (done) {
+    oss.getBucketAcl({
+      bucket: bucketName01
+    }, function (error, res) {             console.log(error, res)
+      should.not.exist(error)
+      res.status.should.equal(200)
+      done()
+    })
+  })
 
-	it('delete bucket', function (done) {
-		oss.deleteBucket(bucketName, function (error, result) {
-			should.not.exist(error)
-			result.statusCode.should.equal(204)
-			done()
-		})
-	})
+  it('set bucket acl', function (done) {
+    oss.setBucketAcl({
+      bucket: bucketName01,
+      acl: 'private'
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(200)
+      done()
+    })
+  })
+
+  it('delete bucket', function (done) {
+    oss.deleteBucket({
+      bucket: bucketName01
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(204)
+      done()
+    })
+  })
+
+  it('delete bucket', function (done) {
+    oss.deleteBucket({
+      bucket: bucketName02
+    }, function (error, res) {
+      should.not.exist(error)
+      res.status.should.equal(204)
+      done()
+    })
+  })
 })
