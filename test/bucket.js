@@ -42,9 +42,10 @@ describe('bucket', function () {
   it('get bucket acl', function (done) {
     oss.getBucketAcl({
       bucket: bucketName01
-    }, function (error, res) {             console.log(error, res)
+    }, function (error, res) {
       should.not.exist(error)
       res.status.should.equal(200)
+      should.exist(res.body.AccessControlPolicy)
       done()
     })
   })
