@@ -1,6 +1,6 @@
 [![NPM](https://nodei.co/npm/aliyun-oss.png?downloads=true)](https://nodei.co/npm/aliyun-oss/)
 
-### node.js sdk for aliyun oss, a new version of [oss-client]()
+### node.js sdk for aliyun oss, a new version of [oss-client](https://github.com/coderhaoxin/oss-client)
 ```bash
 npm install aliyun-oss
 ```
@@ -10,15 +10,21 @@ npm install aliyun-oss
 
 ### how to use
 ```js
-var OSS = require('aliyun-oss')
+var OSS = require('aliyun-oss');
 var option = {
   accessKeyId: 'your access key id',
-  accessKeySecret: 'your access key secret',
-  // host: 'optional, default is: oss-cn-hangzhou.aliyuncs.com',
-  // timeout: 'optional, default is: 300000',
-}
+  accessKeySecret: 'your access key secret'
+};
 
-var oss = OSS.createClient(option)
+/*
+ * 可选 option
+ *
+ * host:    default is: oss-cn-hangzhou.aliyuncs.com,
+ * timeout: default is: 300000,
+ * agent:   default is: agent.maxSockets = 20
+ */
+
+var oss = OSS.createClient(option);
 ```
 
 ### summary
@@ -41,10 +47,10 @@ callback params
 创建object
 ```js
 /*
-* source:  上传的文件, 可以是文件路径、 buffer、 stream
-* headers: 可选，用户自定义 header，如: x-oss-meta-location
-*          当上传方式为: buffer 或者 stream, 建议添加 'Content-Type'(此时无法根据扩展名判断)
-*/
+ * source:  上传的文件, 可以是文件路径、 buffer、 stream
+ * headers: 可选，用户自定义 header，如: x-oss-meta-location
+ *          当上传方式为: buffer 或者 stream, 建议添加 'Content-Type'(此时无法根据扩展名判断)
+ */
 
 oss.putObject({
   bucket: '',
@@ -54,7 +60,7 @@ oss.putObject({
     // optional
     'Content-Length': 1024
   }
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 复制object
@@ -64,7 +70,7 @@ oss.copyObject({
   object: '',
   sourceBucket: '',
   sourceObject: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 删除object
@@ -72,22 +78,22 @@ oss.copyObject({
 oss.deleteObject({
   bucket: '',
   object: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 获取object
 ```js
 /*
-* dest: 保存object的文件路径 或者 writeStream
-* headers: 可选，object类型，用户自定义header，如: If-Unmodified-Since
-*/
+ * dest: 保存object的文件路径 或者 writeStream
+ * headers: 可选，object类型，用户自定义header，如: If-Unmodified-Since
+ */
 
 oss.getObject({
   bucket: '',
   object: '',
   dest: '',
   headers: {}
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 获取object头信息
@@ -95,17 +101,17 @@ oss.getObject({
 oss.headObject({
   bucket: '',
   object: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 获取object列表
 ```js
 /*
-* prefix:    可选，object 前缀
-* marker:    可选，列表起始object
-* delimiter: 可选，object分组字符，若'/'为则不列出路径深度大于等于二层的object。
-* maxKeys:   可选，列出的object最大个数
-*/
+ * prefix:    可选，object 前缀
+ * marker:    可选，列表起始object
+ * delimiter: 可选，object分组字符，若'/'为则不列出路径深度大于等于二层的object。
+ * maxKeys:   可选，列出的object最大个数
+ */
 
 oss.listObject({
   bucket: '',
@@ -113,7 +119,7 @@ oss.listObject({
   marker: '',
   delimiter: '',
   maxKeys: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 
@@ -124,21 +130,21 @@ oss.listObject({
 oss.createBucket({
   bucket: '',
   acl: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 删除bucket
 ```js
 oss.deleteBucket({
   bucket: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 获取bucket访问规则
 ```js
 oss.getBucketAcl({
   bucket: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 设置bucket访问规则
@@ -146,11 +152,11 @@ oss.getBucketAcl({
 oss.setBucketAcl({
   bucket: '',
   acl: ''
-}, function (err, res) {})
+}, function (err, res) {});
 ```
 
 ### test
 Coverage: 89%
 
 ### License
-The MIT License (MIT)
+MIT

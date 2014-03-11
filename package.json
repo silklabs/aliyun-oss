@@ -1,6 +1,6 @@
 {
   "name": "aliyun-oss",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "a new version of oss-client",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,8 @@
   },
   "keywords": [
     "aliyun",
-    "oss"
+    "oss",
+    "client"
   ],
   "author": "haoxin",
   "license": "MIT",
@@ -31,9 +32,9 @@
   "devDependencies": {
     "should": "*",
     "node-uuid": "*",
-    "blanket": "~1.1.6",
-    "mocha": "~1.17.0",
-    "travis-cov": "~0.2.4"
+    "blanket": "*",
+    "mocha": "*",
+    "travis-cov": "*"
   },
   "dependencies": {
     "mime": "~1.2.11",

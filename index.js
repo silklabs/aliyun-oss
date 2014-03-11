@@ -1,1 +1,3 @@
-module.exports = require('./lib/oss')
+'use strict';
+
+module.exports = require('./lib/oss');
