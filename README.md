@@ -125,6 +125,11 @@ oss.listObject({
 
 ### bucket
 
+列举bucket
+```js
+oss.listBucket(function (err, res) {});
+```
+
 创建bucket
 ```js
 oss.createBucket({
@@ -156,7 +161,7 @@ oss.setBucketAcl({
 ```
 
 ### test
-Coverage: 89%
+Coverage: 93%
 
 ### License
 MIT

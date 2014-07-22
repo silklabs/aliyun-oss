@@ -6,7 +6,7 @@ var should = require('should'),
   OSS = require('../index'),
   oss = OSS.createClient(config);
 
-describe('bucket', function() {
+describe('# bucket', function() {
   var bucketName01 = uuid.v4(),
     bucketName02 = uuid.v4();
 
@@ -63,6 +63,15 @@ describe('bucket', function() {
     });
   });
 
+  it('list bucket', function(done) {
+    oss.listBucket(function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.body.ListAllMyBucketsResult.Buckets[0].Bucket.length.should.above(0);
+      done();
+    });
+  });
+
   it('delete bucket', function(done) {
     oss.deleteBucket({
       bucket: bucketName01
@@ -79,6 +88,16 @@ describe('bucket', function() {
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(204);
+      done();
+    });
+  });
+
+  it('delete bucket - 404', function(done) {
+    oss.deleteBucket({
+      bucket: bucketName02
+    }, function(error) {
+      should.exist(error);
+      error.code.should.equal(404);
       done();
     });
   });

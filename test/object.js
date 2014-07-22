@@ -7,7 +7,7 @@ var fs = require('fs'),
   OSS = require('../index'),
   oss = new OSS.createClient(config);
 
-describe('object', function() {
+describe('# object', function() {
   var bucket = uuid.v4(),
     object = uuid.v4();
 
@@ -46,6 +46,7 @@ describe('object', function() {
       dest: ws
     }, function(error, res) {
       should.not.exist(error);
+      res.status.should.equal(200);
       fs.statSync(path).size.should.equal(fs.statSync(__filename).size);
       fs.readFileSync(path, 'utf8').should.equal(fs.readFileSync(__filename, 'utf8'));
       fs.unlinkSync(path);
@@ -62,6 +63,7 @@ describe('object', function() {
       dest: path
     }, function(error, res) {
       should.not.exist(error);
+      res.status.should.equal(200);
       fs.statSync(path).size.should.equal(fs.statSync(__filename).size);
       fs.readFileSync(path, 'utf8').should.equal(fs.readFileSync(__filename, 'utf8'));
       fs.unlinkSync(path);
@@ -92,6 +94,21 @@ describe('object', function() {
     });
   });
 
+  // it('list object (get bucket) - with optional params', function(done) {
+  //   oss.listObject({
+  //     bucket: bucket,
+  //     prefix: 'test',
+  //     marker: object,
+  //     delimiter: '/',
+  //     maxKeys: 30
+  //   }, function(error, res) {
+  //     should.not.exist(error);
+  //     res.status.should.equal(200);
+  //     res.body.ListBucketResult.Contents.length.should.above(0);
+  //     done();
+  //   });
+  // });
+
   it('delete object', function(done) {
     oss.deleteObject({
       bucket: bucket,
@@ -114,7 +131,7 @@ describe('object', function() {
   });
 });
 
-describe('put object by buffer', function() {
+describe('# put object by buffer', function() {
   var bucket = uuid.v4(),
     object = uuid.v4();
 
@@ -140,10 +157,34 @@ describe('put object by buffer', function() {
     });
   });
 
+  it('copy object', function(done) {
+    oss.copyObject({
+      sourceBucket: bucket,
+      sourceObject: object,
+      bucket: bucket,
+      object: object + 'copy'
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      done();
+    });
+  });
+
   it('delete object', function(done) {
     oss.deleteObject({
       bucket: bucket,
       object: object
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(204);
+      done();
+    });
+  });
+
+  it('delete copy object', function(done) {
+    oss.deleteObject({
+      bucket: bucket,
+      object: object + 'copy'
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(204);
@@ -162,7 +203,7 @@ describe('put object by buffer', function() {
   });
 });
 
-describe('put object by stream', function() {
+describe('# put object by stream', function() {
   var bucket = uuid.v4(),
     object = uuid.v4();
 
