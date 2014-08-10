@@ -4,7 +4,11 @@ var should = require('should'),
   uuid = require('node-uuid'),
   config = require('./config'),
   OSS = require('../index'),
-  oss = OSS.createClient(config);
+  oss = OSS.createClient(config),
+  osserr = OSS.createClient({
+    accessKeyId: 'invalid',
+    accessKeySecret: 'invalid'
+  });
 
 describe('# bucket', function() {
   var bucketName01 = uuid.v4(),
@@ -20,13 +24,13 @@ describe('# bucket', function() {
     });
   });
 
-  it('create bucket with acl', function(done) {
-    oss.createBucket({
-      bucket: bucketName02,
-      acl: 'public-read'
+  it('create bucket - 403', function(done) {
+    osserr.createBucket({
+      bucket: bucketName01
     }, function(error, res) {
-      should.not.exist(error);
-      res.status.should.equal(200);
+      should.not.exist(res);
+      error.status.should.equal(403);
+      error.message.indexOf('InvalidAccessKeyId').should.above(0);
       done();
     });
   });
@@ -82,6 +86,17 @@ describe('# bucket', function() {
     });
   });
 
+  it('create bucket with acl', function(done) {
+    oss.createBucket({
+      bucket: bucketName02,
+      acl: 'public-read'
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      done();
+    });
+  });
+
   it('delete bucket', function(done) {
     oss.deleteBucket({
       bucket: bucketName02
@@ -97,7 +112,7 @@ describe('# bucket', function() {
       bucket: bucketName02
     }, function(error) {
       should.exist(error);
-      error.code.should.equal(404);
+      error.status.should.equal(404);
       done();
     });
   });

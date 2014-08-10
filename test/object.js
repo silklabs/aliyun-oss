@@ -13,7 +13,8 @@ describe('# object', function() {
 
   it('create bucket', function(done) {
     oss.createBucket({
-      bucket: bucket
+      bucket: bucket,
+      acl: 'public-read'
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(200);
@@ -32,6 +33,7 @@ describe('# object', function() {
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object);
       done();
     });
   });
@@ -153,6 +155,7 @@ describe('# put object by buffer', function() {
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object);
       done();
     });
   });
@@ -230,6 +233,7 @@ describe('# put object by stream', function() {
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object);
       done();
     });
   });

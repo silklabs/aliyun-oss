@@ -60,7 +60,9 @@ oss.putObject({
     // optional
     'Content-Length': 1024
   }
-}, function (err, res) {});
+}, function (err, res) {
+  console.log(res.objectUrl);
+});
 ```
 
 复制object
