@@ -1,6 +1,11 @@
-[![NPM](https://nodei.co/npm/aliyun-oss.png?downloads=true)](https://nodei.co/npm/aliyun-oss/)
+[![NPM version][npm-img]][npm-url]
+[![License][license-img]][license-url]
+[![Dependency status][david-img]][david-url]
 
-### node.js sdk for aliyun oss, a new version of [oss-client](https://github.com/coderhaoxin/oss-client)
+### aliyun-oss
+node.js sdk for aliyun oss, a new version of [oss-client](https://github.com/coderhaoxin/oss-client),
+friendly with **co**, **koa** ...
+
 ```bash
 npm install aliyun-oss
 ```
@@ -162,8 +167,30 @@ oss.setBucketAcl({
 }, function (err, res) {});
 ```
 
+### use with `co` or `koa`
+
+```js
+var option = {
+  wrapper: 'thunk', // or: promise
+  accessKeyId: '',
+  accessKeySecret: ''
+};
+
+var oss = OSS.createClient(option);
+
+// in co or koa
+yield oss.listBucket();
+```
+
 ### test
-Coverage: 93%
+Coverage: 96%
 
 ### License
 MIT
+
+[npm-img]: https://img.shields.io/npm/v/aliyun-oss.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/aliyun-oss
+[license-img]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license-url]: http://opensource.org/licenses/MIT
+[david-img]: https://img.shields.io/david/coderhaoxin/aliyun-oss.svg?style=flat-square
+[david-url]: https://david-dm.org/coderhaoxin/aliyun-oss

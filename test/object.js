@@ -4,7 +4,7 @@ var fs = require('fs'),
   should = require('should'),
   uuid = require('node-uuid'),
   config = require('./config'),
-  OSS = require('../index'),
+  OSS = require('..'),
   oss = new OSS.createClient(config);
 
 describe('# object', function() {
@@ -34,6 +34,18 @@ describe('# object', function() {
       should.not.exist(error);
       res.status.should.equal(200);
       res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object);
+      done();
+    });
+  });
+
+  it('put object by invalid file path', function(done) {
+    oss.putObject({
+      bucket: bucket,
+      object: object,
+      source: '/xxoo'
+    }, function(error, res) {
+      should.not.exist(res);
+      error.message.should.equal('ENOENT, stat \'/xxoo\'');
       done();
     });
   });
@@ -96,20 +108,20 @@ describe('# object', function() {
     });
   });
 
-  // it('list object (get bucket) - with optional params', function(done) {
-  //   oss.listObject({
-  //     bucket: bucket,
-  //     prefix: 'test',
-  //     marker: object,
-  //     delimiter: '/',
-  //     maxKeys: 30
-  //   }, function(error, res) {
-  //     should.not.exist(error);
-  //     res.status.should.equal(200);
-  //     res.body.ListBucketResult.Contents.length.should.above(0);
-  //     done();
-  //   });
-  // });
+  it('list object (get bucket) - with optional params', function(done) {
+    oss.listObject({
+      bucket: bucket,
+      prefix: 'test',
+      marker: object,
+      delimiter: '/',
+      maxKeys: 30
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      should.exist(res.body.ListBucketResult);
+      done();
+    });
+  });
 
   it('delete object', function(done) {
     oss.deleteObject({
@@ -156,6 +168,18 @@ describe('# put object by buffer', function() {
       should.not.exist(error);
       res.status.should.equal(200);
       res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object);
+      done();
+    });
+  });
+
+  it('get object no dest', function(done) {
+    oss.getObject({
+      bucket: bucket,
+      object: object,
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.body.toString().should.equal('hello,wolrd');
       done();
     });
   });

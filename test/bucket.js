@@ -3,12 +3,8 @@
 var should = require('should'),
   uuid = require('node-uuid'),
   config = require('./config'),
-  OSS = require('../index'),
-  oss = OSS.createClient(config),
-  osserr = OSS.createClient({
-    accessKeyId: 'invalid',
-    accessKeySecret: 'invalid'
-  });
+  OSS = require('..'),
+  oss = OSS.createClient(config);
 
 describe('# bucket', function() {
   var bucketName01 = uuid.v4(),
@@ -24,18 +20,17 @@ describe('# bucket', function() {
     });
   });
 
-  it('create bucket - 403', function(done) {
-    osserr.createBucket({
+  it('get bucket (list object)', function(done) {
+    oss.getBucket({
       bucket: bucketName01
     }, function(error, res) {
-      should.not.exist(res);
-      error.status.should.equal(403);
-      error.message.indexOf('InvalidAccessKeyId').should.above(0);
+      should.not.exist(error);
+      res.status.should.equal(200);
       done();
     });
   });
 
-  it('get bucket (list object)', function(done) {
+  it('list object (get bucket)', function(done) {
     oss.getBucket({
       bucket: bucketName01
     }, function(error, res) {
@@ -113,6 +108,39 @@ describe('# bucket', function() {
     }, function(error) {
       should.exist(error);
       error.status.should.equal(404);
+      done();
+    });
+  });
+});
+
+describe('error handle', function() {
+  it('create bucket - 403', function(done) {
+    var invalidClient = OSS.createClient({
+      accessKeyId: 'invalid',
+      accessKeySecret: 'invalid'
+    });
+
+    invalidClient.createBucket({
+      bucket: 'bucket'
+    }, function(error, res) {
+      should.not.exist(res);
+      error.status.should.equal(403);
+      error.code[0].should.equal('InvalidAccessKeyId');
+      done();
+    });
+  });
+
+  it('invalid host', function(done) {
+    var invalidClient = OSS.createClient({
+      host: 'localhost',
+      agent: false,
+      accessKeyId: 'invalid',
+      accessKeySecret: 'invalid'
+    });
+
+    invalidClient.listBucket(function(error, res) {
+      should.exist(error);
+      should.not.exist(res);
       done();
     });
   });

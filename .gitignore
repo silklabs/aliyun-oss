@@ -1,5 +1,5 @@
-.DS_Store
+coverage/
 npm-debug.log
-node_modules
+node_modules/
 test/config.js
 test/*.download

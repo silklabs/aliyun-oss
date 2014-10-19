@@ -1,7 +1,7 @@
 'use strict';
 
 var should = require('should'),
-  OSS = require('../index'),
+  OSS = require('..'),
   oss = OSS.createClient({
     accessKeyId: 'testAccessKeyId',
     accessKeySecret: 'testAccessKeySecret'
