@@ -3,8 +3,7 @@
 [![Dependency status][david-img]][david-url]
 
 ### aliyun-oss
-node.js sdk for aliyun oss, a new version of [oss-client](https://github.com/coderhaoxin/oss-client),
-friendly with **co**, **koa** ...
+node.js sdk for aliyun oss, friendly with **co**, **koa** ...
 
 ```bash
 npm install aliyun-oss

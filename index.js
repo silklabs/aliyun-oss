@@ -431,9 +431,7 @@ function getPath(options) {
   var path = '';
 
   if (options.object) {
-    path += '/' + options.object.split('/').map(function(item) {
-      return encodeURIComponent(item);
-    }).join('/');
+    path += '/' + encodeURIComponent(options.object);
   }
 
   var params = [];
