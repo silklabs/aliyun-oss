@@ -1,13 +1,14 @@
 'use strict';
 
 var should = require('should'),
-  OSS = require('..'),
-  oss = OSS.createClient({
+  OSS = require('..');
+
+describe('util functions', function() {
+  var oss = OSS.createClient({
     accessKeyId: 'testAccessKeyId',
     accessKeySecret: 'testAccessKeySecret'
   });
 
-describe('util functions', function() {
   it('generateSign', function() {
     var sign = oss.generateSign('POST', {
       'Date': 'Mon, 20 Jan 2014 06:38:31 GMT',

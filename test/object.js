@@ -1,11 +1,12 @@
 'use strict';
 
-var fs = require('fs'),
-  should = require('should'),
+var config = require('./config'),
   uuid = require('node-uuid'),
-  config = require('./config'),
+  should = require('should'),
   OSS = require('..'),
-  oss = new OSS.createClient(config);
+  fs = require('fs');
+
+var oss = new OSS.createClient(config);
 
 describe('# object', function() {
   var bucket = uuid.v4(),
@@ -269,6 +270,71 @@ describe('# put object by stream', function() {
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(204);
+      done();
+    });
+  });
+
+  it('delete bucket', function(done) {
+    oss.deleteBucket({
+      bucket: bucket
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(204);
+      done();
+    });
+  });
+});
+
+describe('# delete multi object', function() {
+  var bucket = uuid.v4(),
+    object1 = uuid.v4(),
+    object2 = uuid.v4();
+
+  it('create bucket', function(done) {
+    oss.createBucket({
+      bucket: bucket
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      done();
+    });
+  });
+
+  it('put object', function(done) {
+    oss.putObject({
+      bucket: bucket,
+      object: object1,
+      source: new Buffer('hello,wolrd', 'utf8')
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object1);
+      done();
+    });
+  });
+
+  it('put object again', function(done) {
+    oss.putObject({
+      bucket: bucket,
+      object: object2,
+      source: new Buffer('hello,wolrd', 'utf8')
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + object2);
+      done();
+    });
+  });
+
+  it('delete multi objects', function(done) {
+    oss.deleteObjects({
+      quiet: false,
+      bucket: bucket,
+      objects: [object1, object2]
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.body.DeleteResult.Deleted.length.should.equal(2);
       done();
     });
   });

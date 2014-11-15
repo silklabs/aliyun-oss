@@ -1,6 +1,6 @@
 {
   "name": "aliyun-oss",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "a new version of oss-client",
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,9 @@
   },
   "keywords": [
     "aliyun",
+    "client",
     "oss",
-    "client"
+    "sdk"
   ],
   "files": [
     "index.js"

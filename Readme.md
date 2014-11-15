@@ -87,6 +87,15 @@ oss.deleteObject({
 }, function (err, res) {});
 ```
 
+批量删除objects
+```js
+oss.deleteObjects({
+  quiet: true, // optional, default is false
+  bucket: '',
+  objects: ['']
+}, function (err, res) {});
+```
+
 获取object
 ```js
 /*

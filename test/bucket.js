@@ -1,10 +1,11 @@
 'use strict';
 
-var should = require('should'),
+var config = require('./config'),
   uuid = require('node-uuid'),
-  config = require('./config'),
-  OSS = require('..'),
-  oss = OSS.createClient(config);
+  should = require('should'),
+  OSS = require('..');
+
+var oss = OSS.createClient(config);
 
 describe('# bucket', function() {
   var bucketName01 = uuid.v4(),

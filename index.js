@@ -8,6 +8,8 @@ var mime = require('mime-types'),
   http = require('http'),
   fs = require('fs');
 
+var isArray = Array.isArray;
+
 function OSS(options) {
   this.accessKeyId = options.accessKeyId;
   this.accessKeySecret = options.accessKeySecret;
@@ -24,12 +26,10 @@ function OSS(options) {
   }
 }
 
-/*
- * @params
- *
- * method
- * headers
- * resource
+/**
+ * @param {string} - method
+ * @param {object} - headers
+ * @param {string} - resource
  */
 OSS.prototype.generateSign = function(method, headers, resource) {
   var params = [];
@@ -74,8 +74,10 @@ OSS.prototype.getHeaders = function(method, headers, options) {
   return headers;
 };
 
-/*
- * @params
+/**
+ * @param {string} - method
+ * @param {object} - options
+ * @param {function} - callback
  */
 OSS.prototype.request = function(method, options, callback) {
   var self = this;
@@ -178,6 +180,8 @@ OSS.prototype.request = function(method, options, callback) {
     } else {
       req.end();
     }
+  } else if (options.body) {
+    req.end(options.body);
   } else {
     req.end();
   }
@@ -194,10 +198,9 @@ OSS.prototype.request = function(method, options, callback) {
   }
 };
 
-/*
- * bucket
+/**
+ * @param {function} - callback
  */
-
 OSS.prototype.listBucket = function(callback) {
   callback = callback || noop;
   var options = {
@@ -207,11 +210,8 @@ OSS.prototype.listBucket = function(callback) {
   this.request('GET', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
- * acl
+/**
+ * @param {object} - { bucket: string, acl: string }
  */
 OSS.prototype.createBucket = function(options, callback) {
   options = options || {};
@@ -226,10 +226,8 @@ OSS.prototype.createBucket = function(options, callback) {
   this.request('PUT', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
+/**
+ * @param {object} - { bucket: string }
  */
 OSS.prototype.deleteBucket = function(options, callback) {
   options = options || {};
@@ -238,10 +236,8 @@ OSS.prototype.deleteBucket = function(options, callback) {
   this.request('DELETE', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
+/**
+ * @param {object} - { bucket: string }
  */
 OSS.prototype.getBucketAcl = function(options, callback) {
   options = options || {};
@@ -252,11 +248,8 @@ OSS.prototype.getBucketAcl = function(options, callback) {
   this.request('GET', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
- * acl
+/**
+ * @param {object} - { bucket: string, acl: string }
  */
 OSS.prototype.setBucketAcl = function(options, callback) {
   options = options || {};
@@ -269,18 +262,11 @@ OSS.prototype.setBucketAcl = function(options, callback) {
   this.request('PUT', options, callback);
 };
 
-/*
- * object
- */
-
-/*
- * @params
+/**
+ * @param {object} - { bucket: string, object: string, source: string|stream|buffer, headers: object }
  *
- * bucket
- * object
- * source
  * headers: {
- *   'Content-Type': 'text/plain'
+ *   'Content-Type': 'text/plain',
  *   'Content-Length': 1024
  * }
  */
@@ -299,13 +285,8 @@ OSS.prototype.putObject = function(options, callback) {
   });
 };
 
-/*
- * @params
- *
- * bucket
- * object
- * sourceBucket
- * sourceObject
+/**
+ * @param {object} - { bucket: string, object: string, sourceBucket: string, sourceObject: string }
  */
 OSS.prototype.copyObject = function(options, callback) {
   options = options || {};
@@ -324,11 +305,8 @@ OSS.prototype.copyObject = function(options, callback) {
   });
 };
 
-/*
- * @params
- *
- * bucket
- * object
+/**
+ * @param {object} - { bucket: string, object: string }
  */
 OSS.prototype.deleteObject = function(options, callback) {
   options = options || {};
@@ -337,13 +315,51 @@ OSS.prototype.deleteObject = function(options, callback) {
   this.request('DELETE', options, callback);
 };
 
-/*
- * @params
+/**
+ * put multi objects
  *
- * bucket
- * object
- * dest
- * headers
+ * @param {object} - { bucket: string, quiet: boolean, objects: []string }
+ */
+OSS.prototype.deleteObjects = function(options, callback) {
+  callback = callback || noop;
+
+  if (!(options && isArray(options.objects) && options.objects.length)) {
+    return callback(new Error('invalid options'));
+  }
+
+  options.isDel = true;
+
+  var xml = '<?xml version="1.0" encoding="UTF-8"?><Delete>',
+    end = '</Delete>';
+
+  if (options.quiet) {
+    xml += '<Quiet>true</Quiet>';
+  } else {
+    xml += '<Quiet>false</Quiet>';
+  }
+
+  options.objects.forEach(function(object) {
+    xml += '<Object><Key>' + object + '</Key></Object>';
+  });
+  xml += end;
+
+  // body
+  options.body = xml;
+
+  var md5 = crypto.createHash('md5').update(xml).digest('base64'),
+    length = Buffer.byteLength(xml);
+
+  // headers
+  options.headers = {
+    'Content-Md5': md5,
+    'Content-Length': length
+  };
+
+  this.request('POST', options, callback);
+};
+
+/**
+ * @param {object} - { bucket: string, object: string, dest: string|stream, headers: object }
  */
 OSS.prototype.getObject = function(options, callback) {
   options = options || {};
@@ -352,11 +368,8 @@ OSS.prototype.getObject = function(options, callback) {
   this.request('GET', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
- * object
+/**
+ * @param {object} - { bucket: string, object: string }
  */
 OSS.prototype.headObject = function(options, callback) {
   options = options || {};
@@ -365,14 +378,8 @@ OSS.prototype.headObject = function(options, callback) {
   this.request('HEAD', options, callback);
 };
 
-/*
- * @params
- *
- * bucket
- * prefix
- * marker
- * delimiter
- * maxKeys
+/**
+ * @param {object} - { bucket: string, prefix: string, marker: string, delimiter: string, maxKeys: number }
  */
 OSS.prototype.getBucket = function(options, callback) {
   options = options || {};
@@ -420,15 +427,20 @@ function getResource(options) {
   } else {
     resource += '/';
   }
-  if (options.isAcl) {
-    resource += '?acl';
-  }
+
+  if (options.isAcl) return resource += '?acl';
+  if (options.isDel) return resource += '?delete';
 
   return resource;
 }
 
 function getPath(options) {
   var path = '';
+
+  // get bucket acl
+  if (options.isAcl) return '/?acl';
+  // delete multi objects
+  if (options.isDel) return '/?delete';
 
   if (options.object) {
     path += '/' + encodeURIComponent(options.object);
@@ -449,10 +461,6 @@ function getPath(options) {
   }
   if (params.length) {
     path += '/?' + params.join('&');
-  }
-
-  if (options.isAcl) {
-    path += '/?acl';
   }
 
   return path;
