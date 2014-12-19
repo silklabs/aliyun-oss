@@ -148,7 +148,8 @@ describe('# object', function() {
 
 describe('# put object by buffer', function() {
   var bucket = uuid.v4(),
-    object = uuid.v4();
+    object = uuid.v4(),
+    object;
 
   it('create bucket', function(done) {
     oss.createBucket({
@@ -213,6 +214,48 @@ describe('# put object by buffer', function() {
     oss.deleteObject({
       bucket: bucket,
       object: object + 'copy'
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(204);
+      done();
+    });
+  });
+
+  var name = object + '.txt';
+
+  it('put object with lower-upper header', function(done) {
+    oss.putObject({
+      bucket: bucket,
+      object: name,
+      headers: {
+        'content-TYPE': 'text/plain'
+      },
+      source: new Buffer('hello,wolrd', 'utf8')
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.objectUrl.should.equal('http://' + bucket + '.oss-cn-hangzhou.aliyuncs.com/' + name);
+      done();
+    });
+  });
+
+  it('get object', function(done) {
+    oss.getObject({
+      bucket: bucket,
+      object: name,
+    }, function(error, res) {
+      should.not.exist(error);
+      res.status.should.equal(200);
+      res.headers['content-type'].should.equal('text/plain');
+      res.body.toString().should.equal('hello,wolrd');
+      done();
+    });
+  });
+
+  it('delete object', function(done) {
+    oss.deleteObject({
+      bucket: bucket,
+      object: name
     }, function(error, res) {
       should.not.exist(error);
       res.status.should.equal(204);

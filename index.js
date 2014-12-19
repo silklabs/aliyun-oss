@@ -27,21 +27,20 @@ function OSS(options) {
 }
 
 /**
- * @param {string} - method
- * @param {object} - headers
+ * @param {Request} - req
  * @param {string} - resource
  */
-OSS.prototype.generateSign = function(method, headers, resource) {
+OSS.prototype.generateSign = function(req, resource) {
   var params = [];
-  params.push(method);
-  params.push(headers['Content-Md5'] || '');
-  params.push(headers['Content-Type'] || '');
-  params.push(headers.Date || '');
+  params.push(req.method);
+  params.push(req.getHeader('Content-Md5') || '');
+  params.push(req.getHeader('Content-Type') || '');
+  params.push(req.getHeader('Date') || '');
 
-  var keys = Object.keys(headers).sort();
+  var keys = Object.keys(req._headers).sort();
   for (var i = 0; i < keys.length; i++) {
     if (keys[i].toLowerCase().indexOf('x-oss') !== -1) {
-      params.push(keys[i].toLowerCase() + ':' + headers[keys[i]]);
+      params.push(keys[i].toLowerCase() + ':' + req._headers[keys[i]]);
     }
   }
 
@@ -52,26 +51,28 @@ OSS.prototype.generateSign = function(method, headers, resource) {
   return 'OSS ' + this.accessKeyId + ':' + signature;
 };
 
-OSS.prototype.getHeaders = function(method, headers, options) {
-  headers.Date = new Date().toGMTString();
+/**
+ * @param {Request} - req
+ * @param {object} - options
+ */
+OSS.prototype.setHeaders = function(req, options) {
+  req.setHeader('Date', new Date().toGMTString());
 
   if (options.source) {
     var contentType = mime.lookup(options.source);
 
-    if (contentType && !headers['Content-Type']) {
-      headers['Content-Type'] = contentType;
+    if (contentType && !req.getHeader('Content-Type')) {
+      req.setHeader('Content-Type', contentType);
     }
     // buffer
     if (Buffer.isBuffer(options.source)) {
-      headers['Content-Length'] = options.source.length;
-      headers['Content-Md5'] = crypto.createHash('md5').update(options.source).digest('base64');
+      req.setHeader['Content-Length'] = options.source.length;
+      req.setHeader['Content-Md5'] = crypto.createHash('md5').update(options.source).digest('base64');
     }
   }
 
   var resource = getResource(options);
-  headers.Authorization = this.generateSign(method, headers, resource);
-
-  return headers;
+  req.setHeader('Authorization', this.generateSign(req, resource));
 };
 
 /**
@@ -81,14 +82,12 @@ OSS.prototype.getHeaders = function(method, headers, options) {
  */
 OSS.prototype.request = function(method, options, callback) {
   var self = this;
+  var headers = options.headers || {};
   var path = getPath(options);
   var host = self.host;
   if (options.bucket) {
     host = options.bucket + '.' + host;
   }
-
-  var headers = options.headers || {};
-  headers = self.getHeaders(method, headers, options);
 
   var req = http.request({
     method: method,
@@ -164,6 +163,8 @@ OSS.prototype.request = function(method, options, callback) {
       });
     });
   });
+
+  self.setHeaders(req, options);
 
   req.on('error', function(error) {
     callback(error);
@@ -405,7 +406,7 @@ exports.createClient = function(options) {
 
   var wrapper = options.wrapper;
   if (wrapper) {
-    require('thunkify-or-promisify')(client, wrapper, ['request', 'getHeaders', 'generateSign']);
+    require('thunkify-or-promisify')(client, wrapper, ['request', 'setHeaders', 'generateSign']);
   }
 
   return client;
